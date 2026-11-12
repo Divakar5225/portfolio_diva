@@ -1,33 +1,72 @@
-import { Menu } from "lucide-react";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
+
+const links = [
+  ["Home", "/"],
+  ["About", "/about"],
+  ["Projects", "/projects"],
+  ["Research", "/research"],
+  ["Expertise", "/skills"],
+  ["Contact", "/contact"],
+];
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    "site-nav-link" + (isActive ? " is-active" : "");
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <nav className="fixed top-0 left-0 w-full bg-slate-950/80 backdrop-blur-md border-b border-slate-800 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-20 px-6">
+    <header className="site-header">
+      <nav className="site-nav" aria-label="Main navigation">
+        <div className="section-container site-nav-inner">
+          <NavLink to="/" className="brand" onClick={closeMenu} aria-label="Divakar Guru, home">
+            <span className="brand-name">Divakar <span>Guru</span></span>
+          </NavLink>
 
-        <h1 className="text-2xl font-bold text-cyan-400">
-          Divakar Guru
-        </h1>
+          <div className="site-nav-links">
+            {links.map(([name, path]) => (
+              <NavLink key={path} to={path} end={path === "/"} className={linkClass}>
+                {name}
+              </NavLink>
+            ))}
+          </div>
 
-        <ul className="hidden md:flex items-center gap-8 text-slate-300">
-          <li className="hover:text-cyan-400 cursor-pointer transition-colors">About</li>
-          <li className="hover:text-cyan-400 cursor-pointer transition-colors">Skills</li>
-          <li className="hover:text-cyan-400 cursor-pointer transition-colors">Projects</li>
-          <li className="hover:text-cyan-400 cursor-pointer transition-colors">Research</li>
-          <li className="hover:text-cyan-400 cursor-pointer transition-colors">Contact</li>
-        </ul>
+          <button
+            type="button"
+            className="site-menu-toggle"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
+          </button>
+        </div>
 
-        <button className="hidden md:block rounded-lg bg-cyan-500 px-5 py-2 font-semibold hover:bg-cyan-600 transition">
-          Resume
-        </button>
-
-        <button className="md:hidden">
-          <Menu size={28} />
-        </button>
-
-      </div>
-    </nav>
+        {menuOpen && (
+          <div className="mobile-navigation" id="mobile-navigation">
+            <div className="section-container mobile-navigation-links">
+              {links.map(([name, path]) => (
+                <NavLink
+                  key={path}
+                  to={path}
+                  end={path === "/"}
+                  className={linkClass}
+                  onClick={closeMenu}
+                >
+                  {name}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+    </header>
   );
 };
 
 export default Navbar;
+
+
